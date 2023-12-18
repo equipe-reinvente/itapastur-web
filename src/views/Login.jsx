@@ -13,15 +13,16 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
 import MainTheme from '../theme/MainTheme';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function Login() {
-  const handleSubmit = (event) => {
+
+  const { login } = React.useContext(AuthContext);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    await login({ email: data.get('email'), password: data.get('password') })
   };
 
   return (

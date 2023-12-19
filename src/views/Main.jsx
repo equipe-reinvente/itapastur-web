@@ -10,7 +10,6 @@ export default function Main() {
     verifyToken();
   }, [])
 
-
   return (
     <>
       <div>Main</div>

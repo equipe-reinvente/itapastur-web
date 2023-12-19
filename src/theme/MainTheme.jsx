@@ -8,4 +8,4 @@ const MainTheme = createTheme({
   }
 })
 
-export default MainTheme
+export default MainTheme;

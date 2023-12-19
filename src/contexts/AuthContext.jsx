@@ -7,6 +7,8 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [authToken, setAuthToken] = useState(null);
   const [user, setUser] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
   const navigate = useNavigate();
 
   const verifyToken = () => {
@@ -17,6 +19,7 @@ export function AuthProvider({ children }) {
       Api.defaults.headers.common['Authorization'] = `Bearer ${token}`
       setAuthToken(token)
       setUser(user)
+      setIsAuthenticated(true)
       navigate('Main')
     } else {
       navigate('Login')
@@ -36,6 +39,7 @@ export function AuthProvider({ children }) {
 
       localStorage.setItem('token', JSON.stringify(authToken))
       localStorage.setItem('user', JSON.stringify(user))
+      setIsAuthenticated(true)
       navigate('/main')
     } catch (error) {
       console.error('Login error:', error);
@@ -43,8 +47,42 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    Api.defaults.headers.common['Authorization'] = ''
+    setAuthToken(null)
+    setUser(null)
+    setIsAuthenticated(false)
+    navigate('Login');
+  }
+
+  const register = async (userParams) => {
+    try {
+      const response = await Api.post('/users', {
+        email: userParams.email,
+        password: userParams.password,
+        name: userParams.name,
+        is_turist: false,
+      });
+
+      setAuthToken(response.data['token'])
+      setUser(response.data['user'])
+      Api.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
+
+      localStorage.setItem('token', JSON.stringify(authToken))
+      localStorage.setItem('user', JSON.stringify(user))
+      setIsAuthenticated(true)
+      navigate('/main')
+    } catch (error) {
+      console.error('Register error:', error);
+      alert('Error in register!');
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ login, verifyToken }}>
+    <AuthContext.Provider value={{ login, verifyToken, logout, isAuthenticated, register }}>
       {children}
     </AuthContext.Provider>
   )

@@ -13,15 +13,17 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
 import MainTheme from '../theme/MainTheme';
+import { AuthContext } from '../contexts/AuthContext';
+import { useContext } from 'react';
 
 export default function Register() {
-  const handleSubmit = (event) => {
+
+  const { register } = useContext(AuthContext);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    await register({ email: data.get('email'), password: data.get('password'), name: data.get('name') })
   };
 
   return (
@@ -86,7 +88,7 @@ export default function Register() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Sign Up
             </Button>
             <Grid container>
 
